@@ -32,13 +32,13 @@
 
 /* external analysis tool example. */
 
-#ifndef _ELAM_H_
-#define _ELAM_H_ 1
+#ifndef _MEMSIZE_H_
+#define _MEMSIZE_H_ 1
 
 #include "analysis_tool.h"
 #include <unordered_map>
 #include <bits/stdc++.h>
-
+#include <cstddef>
 
 using dynamorio::drmemtrace::analysis_tool_t;
 using dynamorio::drmemtrace::memref_t;
@@ -46,10 +46,10 @@ using dynamorio::drmemtrace::addr_t;
 
 enum IoType {Load, Store};
 
-class elam_t : public analysis_tool_t {
+class memsize_t : public analysis_tool_t {
 public:
-    explicit elam_t(unsigned int verbose);
-    virtual ~elam_t();
+    explicit memsize_t(unsigned int verbose);
+    virtual ~memsize_t();
     std::string
     initialize() override;
     bool
@@ -70,7 +70,10 @@ public:
     parallel_shard_memref(void *shard_data, const memref_t &memref) override;
     std::string
     parallel_shard_error(void *shard_data) override;
-    std::map<unsigned int, std::unordered_map<IoType, std::unordered_map<addr_t, uint64_t>>> ios;
+    //std::map<unsigned int, std::unordered_map<IoType, std::unordered_map<addr_t, uint64_t>>> ios;
+	typedef std::unordered_map<size_t, uint64_t> size_map_t;
+	typedef std::unordered_map<addr_t, size_map_t> addr_map_t;
+    std::map<unsigned int, addr_map_t> ios;
     unsigned int last_timestamp = 0;
     unsigned int line_size;
     unsigned int line_size_bits_;
@@ -79,4 +82,4 @@ protected:
     const static std::string TOOL_NAME;
 };
 
-#endif /* _ELAM_H_ */
+#endif /* _MEMSIZE_H_ */
