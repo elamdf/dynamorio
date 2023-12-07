@@ -126,18 +126,8 @@ bool
 elam_t::process_memref(const memref_t &memref) // TODO make this work with parallel / multithreaded applications if we actually care about delineating
 {
 
-	/* data structure from #drmemtrace/memref.h */
-    //if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ) {
-    //        update_map_from_access(&ios[last_timestamp][IoType::Load], memref.instr.addr, memref.instr.size, line_size, line_size_bits_);
-    //} else if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
-    //        update_map_from_access(&ios[last_timestamp][IoType::Store], memref.instr.addr, memref.instr.size, line_size, line_size_bits_);
-    //} else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER && memref.marker.marker_type == dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
-    //    uint64_t timestamp = memref.marker.marker_value;
-    //    last_timestamp = timestamp;
-    //}
-	
 	if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ || memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
-		ios[last_timestamp][memref.data.addr] = memref.data.size;							
+        ios.push_back({last_timestamp, memref.data.addr, memref.data.size});
     } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER && memref.marker.marker_type == dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
         uint64_t timestamp = memref.marker.marker_value;
         last_timestamp = timestamp;
@@ -149,32 +139,9 @@ elam_t::process_memref(const memref_t &memref) // TODO make this work with paral
 bool
 elam_t::print_results()
 {
-//    std::fprintf(stderr, "timestamp,address,count,type\n");
-//    for (const auto & a : ios) {
-//        unsigned int timestamp = a.first;
-//        for (const auto & ioType : a.second) {
-//            for (const auto & io : ioType.second) {
-//                addr_t addr = io.first;
-//                unsigned int n_occurences = io.second;
-//                switch (ioType.first) {
-//                    case IoType::Load: 
-//                        std::fprintf(stderr, "%u,%llu,%u,Load\n", timestamp, addr, n_occurences);
-//                     case IoType::Store:
-//                        std::fprintf(stderr, "%u,%llu,%u,Store\n", timestamp, addr, n_occurences);
-//                        // TODO the rest of ops (ifetch, prefetch, etc?)
-//                }
-//            }
-//        }
-//
-//    }
-	 
     std::fprintf(stderr, "timestamp,address,size\n");
 	for (const auto & io : ios) {
-		unsigned int timestamp = io.first;
-		for (const auto & addr_size_map : io.second) {
-			addr_t addr = addr_size_map.first;
-			size_t size = addr_size_map.second;
-			std::fprintf(stderr, "%u,%llu,%zu\n", timestamp, addr, size);}
+        std::fprintf(stderr, "%u,%llu,%zu\n", io.timestamp, io.addr, io.size);}
 	}
     return true;
 }

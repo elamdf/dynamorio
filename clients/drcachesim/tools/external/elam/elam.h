@@ -71,8 +71,12 @@ public:
     std::string
     parallel_shard_error(void *shard_data) override;
     //std::map<unsigned int, std::unordered_map<IoType, std::unordered_map<addr_t, uint64_t>>> ios;
-	typedef std::unordered_map<addr_t, size_t> addr_size_map_t;
-    std::map<unsigned int, addr_size_map_t> ios;
+    typedef struct access {
+        unsigned int timestamp;
+        addr_t addr;
+        long size;
+    } acccess;
+    std::vector<access> ios;
     unsigned int last_timestamp = 0;
     unsigned int line_size;
     unsigned int line_size_bits_;
