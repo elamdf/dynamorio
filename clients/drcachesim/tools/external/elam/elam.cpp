@@ -65,7 +65,6 @@ bool
 elam_t::parallel_shard_supported()
 {
     return false;
-    
 }
 
 void *
@@ -98,13 +97,15 @@ back_align(addr_t addr, addr_t align)
     return addr & ~(align - 1);
 }
 
-
-void update_map_from_access(std::unordered_map<addr_t, uint64_t> * m, addr_t start_addr, uint64_t size, uint64_t line_size, uint64_t line_size_bits_) {
-        for (dynamorio::drmemtrace::addr_t addr = back_align(start_addr, line_size);
-            addr < start_addr + size && addr < addr + line_size /* overflow */;
-            addr += line_size) {
-            ++(*m)[addr >> line_size_bits_];
-        }
+void
+update_map_from_access(std::unordered_map<addr_t, uint64_t> *m, addr_t start_addr,
+                       uint64_t size, uint64_t line_size, uint64_t line_size_bits_)
+{
+    for (dynamorio::drmemtrace::addr_t addr = back_align(start_addr, line_size);
+         addr < start_addr + size && addr < addr + line_size /* overflow */;
+         addr += line_size) {
+        ++(*m)[addr >> line_size_bits_];
+    }
 }
 
 bool
@@ -120,12 +121,17 @@ elam_t::parallel_shard_error(void *shard_data)
 }
 
 bool
-elam_t::process_memref(const memref_t &memref) // TODO make this work with parallel / multithreaded applications if we actually care about delineating
+elam_t::process_memref(
+    const memref_t &memref) // TODO make this work with parallel / multithreaded
+                            // applications if we actually care about delineating
 {
 
-	if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ || memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
-        ios.push_back({last_timestamp, memref.data.addr, memref.data.size});
-    } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER && memref.marker.marker_type == dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
+    if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ ||
+        memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
+        ios.push_back({ last_timestamp, memref.data.addr, memref.data.size });
+    } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER &&
+               memref.marker.marker_type ==
+                   dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
         uint64_t timestamp = memref.marker.marker_value;
         last_timestamp = timestamp;
     }
@@ -136,8 +142,8 @@ bool
 elam_t::print_results()
 {
     std::fprintf(stderr, "timestamp,address,size\n");
-	for (const auto & io : ios) {
-        std::fprintf(stderr, "%u,%llu,%zu\n", io.timestamp, io.addr, io.size);}
-	}
+    for (const auto &io : ios) {
+        std::fprintf(stderr, "%u,%llu,%zu\n", io.timestamp, io.addr, io.size);
+    }
     return true;
 }

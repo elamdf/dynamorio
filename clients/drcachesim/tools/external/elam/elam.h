@@ -74,7 +74,7 @@ public:
     typedef struct access {
         unsigned int timestamp;
         addr_t addr;
-        long size;
+        unsigned int  size;
     } acccess;
     std::vector<access> ios;
     unsigned int last_timestamp = 0;
