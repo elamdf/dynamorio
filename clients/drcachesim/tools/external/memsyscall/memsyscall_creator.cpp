@@ -30,59 +30,30 @@
  * DAMAGE.
  */
 
-/* external analysis tool example. */
+/* External analysis tool creator functions. */
 
-#ifndef _ELAM_H_
-#define _ELAM_H_ 1
+#include "../common/options.h"
+#include "analyzer.h"
+#include "memsyscall_create.h"
+#include <iostream>
 
-#include "analysis_tool.h"
-#include <unordered_map>
-#include <bits/stdc++.h>
+using ::dynamorio::drmemtrace::analysis_tool_t;
+using ::dynamorio::drmemtrace::op_verbose;
 
+#ifdef WINDOWS
+#    define EXPORT __declspec(dllexport)
+#else /* UNIX */
+#    define EXPORT __attribute__((visibility("default")))
+#endif
 
-using dynamorio::drmemtrace::analysis_tool_t;
-using dynamorio::drmemtrace::memref_t;
-using dynamorio::drmemtrace::addr_t;
+extern "C" EXPORT const char *
+get_tool_name()
+{
+    return "memsyscall";
+}
 
-enum IoType {Load, Store};
-
-class elam_t : public analysis_tool_t {
-public:
-    explicit elam_t(unsigned int verbose);
-    virtual ~elam_t();
-    std::string
-    initialize() override;
-    bool
-    process_memref(const memref_t &memref) override;
-    bool
-    print_results() override;
-    bool
-    parallel_shard_supported() override;
-    void *
-    parallel_worker_init(int worker_index) override;
-    std::string
-    parallel_worker_exit(void *worker_data) override;
-    void *
-    parallel_shard_init(int shard_index, void *worker_data) override;
-    bool
-    parallel_shard_exit(void *shard_data) override;
-    bool
-    parallel_shard_memref(void *shard_data, const memref_t &memref) override;
-    std::string
-    parallel_shard_error(void *shard_data) override;
-    //std::map<unsigned int, std::unordered_map<IoType, std::unordered_map<addr_t, uint64_t>>> ios;
-    typedef struct access {
-        unsigned int timestamp;
-        addr_t addr;
-        long size;
-    } acccess;
-    std::vector<access> ios;
-    unsigned int last_timestamp = 0;
-    unsigned int line_size;
-    unsigned int line_size_bits_;
-
-protected:
-    const static std::string TOOL_NAME;
-};
-
-#endif /* _ELAM_H_ */
+extern "C" EXPORT analysis_tool_t *
+analysis_tool_create()
+{
+    return memsyscall_tool_create(op_verbose.get_value());
+}

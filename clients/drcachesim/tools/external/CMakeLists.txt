@@ -45,3 +45,5 @@ subdir_list(SUBDIRS ${CMAKE_CURRENT_SOURCE_DIR})
 
 message("WARNING HARDCODED SINGLE EXTERNAL LIB")
 add_subdirectory("elam")
+add_subdirectory("memsize")
+add_subdirectory("memsyscall")

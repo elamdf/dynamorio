@@ -35,9 +35,7 @@
 #include "dr_api.h"
 #include "elam.h"
 #include <iostream>
-#include <unordered_map>
 #include "analysis_tool.h"
-#include "trace_entry.h"
 
 const std::string elam_t::TOOL_NAME = "Elam's tool";
 
@@ -109,7 +107,6 @@ void update_map_from_access(std::unordered_map<addr_t, uint64_t> * m, addr_t sta
         }
 }
 
-
 bool
 elam_t::parallel_shard_memref(void *shard_data, const memref_t &memref)
 {
@@ -131,8 +128,7 @@ elam_t::process_memref(const memref_t &memref) // TODO make this work with paral
     } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER && memref.marker.marker_type == dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
         uint64_t timestamp = memref.marker.marker_value;
         last_timestamp = timestamp;
-	}
-
+    }
     return true;
 }
 
