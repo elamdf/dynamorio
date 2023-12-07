@@ -75,6 +75,7 @@ public:
         unsigned int timestamp;
         addr_t addr;
         unsigned int  size;
+        IoType type;
     } acccess;
     std::vector<access> ios;
     unsigned int last_timestamp = 0;

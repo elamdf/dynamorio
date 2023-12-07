@@ -128,7 +128,7 @@ elam_t::process_memref(
 
     if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ ||
         memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
-        ios.push_back({ last_timestamp, memref.data.addr, memref.data.size });
+        ios.push_back({ last_timestamp, memref.data.addr, memref.data.size, memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE ? IoType::Store : IoType::Load)});
     } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER &&
                memref.marker.marker_type ==
                    dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
@@ -143,7 +143,7 @@ elam_t::print_results()
 {
     std::fprintf(stderr, "timestamp,address,size\n");
     for (const auto &io : ios) {
-        std::fprintf(stderr, "%u,%llu,%zu\n", io.timestamp, io.addr, io.size);
+        std::fprintf(stderr, "%u,%llu,%zu,%s\n", io.timestamp, io.addr, io.size, io.type == IoType::Store ? "Store" : "Load");
     }
     return true;
 }
