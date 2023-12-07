@@ -128,7 +128,7 @@ elam_t::process_memref(
 
     if (memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_READ ||
         memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE) {
-        ios.push_back({ last_timestamp, memref.data.addr, memref.data.size, memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE ? IoType::Store : IoType::Load)});
+        ios.push_back({ last_timestamp, memref.data.addr, memref.data.size, memref.data.type == dynamorio::drmemtrace::TRACE_TYPE_WRITE ? IoType::Store : IoType::Load});
     } else if (memref.marker.type == dynamorio::drmemtrace::TRACE_TYPE_MARKER &&
                memref.marker.marker_type ==
                    dynamorio::drmemtrace::TRACE_MARKER_TYPE_TIMESTAMP) {
