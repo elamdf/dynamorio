@@ -141,7 +141,7 @@ elam_t::process_memref(
 bool
 elam_t::print_results()
 {
-    std::fprintf(stderr, "timestamp,address,size\n");
+    std::fprintf(stderr, "timestamp,address,size, type\n");
     for (const auto &io : ios) {
         std::fprintf(stderr, "%u,%llu,%zu,%s\n", io.timestamp, io.addr, io.size, io.type == IoType::Store ? "Store" : "Load");
     }
